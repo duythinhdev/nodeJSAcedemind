@@ -3,9 +3,10 @@ const mongoose = require('mongoose');
 const Order = require('../../models/orders');
 const Product = require('../../models/products');
 const router = express.Router();
+
 // handle incomming get requests to /orders
 router.get('/', (req, res, next) => {
-    Order.find().select('product quantity _id').exec().then(docs => {
+    Order.find().select('product quantity _id').populate('product', 'name').exec().then(docs => {
             res.status(200).json({
                 count: docs.length,
                 orders: docs.map(doc => {
@@ -21,9 +22,10 @@ router.get('/', (req, res, next) => {
                 })
             });
         }
-    ).catch(err => {
-        res.status(500).json({error: err})
-    })
+    )
+    //     .catch(err => {
+    //     res.status(500).json({error: err})
+    // })
 })
 router.post('/', (req, res, next) => {
     Product.findById(req.body.productId).then(product => {
@@ -61,7 +63,7 @@ router.post('/', (req, res, next) => {
 
 })
 router.get('/:orderId',(req,res,next )=> {
-    Order.findById(req.params.orderId).exec().then(
+    Order.findById(req.params.orderId).populate('product').exec().then(
         order =>{
             if(!order)
             {

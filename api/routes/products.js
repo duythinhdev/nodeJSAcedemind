@@ -2,11 +2,15 @@ const express = require('express');
 const router = express.Router();
 const Product = require('../../models/products');
 const mongoose = require('mongoose');
+const multer = require('multer');
+const upload = multer({dest: '/upload/'});
+const CheckAuth = require('../../middleware/check-auth');
 
 router.get('/', (req, res, next) => {
     Product.find().select('name price _id')
         .exec()
         .then(doc => {
+            console.log(doc)
             const response = {
                 count: doc.length,
                 product: doc.map(doc => {
@@ -35,7 +39,7 @@ router.get('/', (req, res, next) => {
 //         message: "hadling get request to /products"
 //     })
 // });
-router.get('/:productId', (req, res, next) => {
+router.get('/:productId',(req, res, next) => {
     const id = req.params.productId;
     Product.findById(id).select().exec().then(doc => {
         console.log("From database", doc);
@@ -56,7 +60,8 @@ router.get('/:productId', (req, res, next) => {
     })
 
 })
-router.post('/', (req, res, next) => {
+router.post('/', CheckAuth ,upload.single('productImage'),(req, res, next) => {
+    console.log(req.file)
     const product = new Product({
         _id: new mongoose.Types.ObjectId(),
         name: req.body.name,
