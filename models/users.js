@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 
-const ordersSchema = mongoose.Schema({
+const userSchema = mongoose.Schema({
     _id: mongoose.Schema.Types.ObjectId,
     email: {
         type: String,
@@ -11,4 +11,4 @@ const ordersSchema = mongoose.Schema({
     password: { type: String,required: true }
 })
 
-module.exports = mongoose.model('User', ordersSchema)
+module.exports = mongoose.model('User', userSchema)
